@@ -4,7 +4,7 @@
 from telebot import types
 import telebot
 import webbrowser
-# аааааааааааааааааааааааа
+# аа
 @bot.message_handler(commands=['start'])
 def start_message(message):
     keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True)
