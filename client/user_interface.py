@@ -4,7 +4,8 @@
 from telebot import types
 import telebot
 import webbrowser
-# аа
+#не надо в код сувать диалог бота нужно создать файл с константами откуда их имопртируешь и используешь
+
 @bot.message_handler(commands=['start'])
 def start_message(message):
     keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True)
