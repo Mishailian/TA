@@ -5,9 +5,7 @@ import json
 from telebot import types
 import telebot
 import webbrowser
-#не надо в код сувать диалог бота нужно создать файл с константами откуда их имопртируешь и используешь
-bot = telebot.TeleBot('6886812015:AAEApmY1oXvh5IT6_Mf5cLiuwOYs-fOeI7c')
-my_chat_id = 1158846931
+
 def read(filename):
     with open(filename, 'r', encoding='utf-8') as file:
         return json.load(file)
