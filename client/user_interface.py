@@ -4,8 +4,9 @@
 import json
 from telebot import types
 import telebot
+from static import BOT_TOKEN
 import webbrowser
-
+bot = telebot.TeleBot(BOT_TOKEN)
 def read(filename):
     with open(filename, 'r', encoding='utf-8') as file:
         return json.load(file)
