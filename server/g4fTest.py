@@ -20,9 +20,8 @@ def ask_gpt(promt) -> str:
     ans_message = ''
     for message in response:
         ans_message += message
-        
+    print(f'work in sec - "{time.time() - time_start}"')
     return ans_message
 
 result = ask_gpt('hello')
 print(result)
-print(f'work in sec - "{time.time() - time_start}"')
