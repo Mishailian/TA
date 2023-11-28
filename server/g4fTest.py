@@ -23,5 +23,4 @@ def ask_gpt(promt) -> str:
     print(f'work in sec - "{time.time() - time_start}"')
     return ans_message
 
-result = ask_gpt('hello')
-print(result)
+
