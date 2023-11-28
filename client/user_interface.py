@@ -4,6 +4,7 @@ from telebot import types
 import telebot
 from static import BOT_TOKEN
 
+glob = True
 bot = telebot.TeleBot(BOT_TOKEN)
 request = []
 def read(filename):
@@ -12,6 +13,8 @@ def read(filename):
 
 n_data = read('C:/klasss/data.json')
 def script(message):
+    global glob
+    glob = False
     keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True)
     button1 = types.KeyboardButton(text=n_data['questions'][5]['yes'])
     button2 = types.KeyboardButton(text=n_data['questions'][5]['no'])
@@ -26,13 +29,15 @@ def question(message, answer1, answer2, answer3, answer4, question1, choice, req
         request.append(request1)
     elif message.text == answer2:
         step = False
+        if message.text ==n_data['questions'][5]['no']:
+            step == True
     if step:
-        keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
         button1 = types.KeyboardButton(text=answer3)
         button2 = types.KeyboardButton(text=answer4)
         keyboard1.row(button1, button2)
         bot.send_message(message.chat.id, question1, reply_markup=keyboard1)
-    if not step and choice:
+    elif step == False and choice == True:
         script(message)
 
 @bot.message_handler(commands=['start'])
@@ -85,34 +90,75 @@ def question2(message):
         bot.send_message(message.chat.id, n_data['questions'][2]['shot'], reply_markup=keyboard1)
         bot.register_next_step_handler(message, question3)
 def question3(message):
-
+   
     question(message, n_data['questions'][2]['yes'], n_data['questions'][2]['no'], n_data['questions'][3]['yes'], n_data['questions'][3]['no'], n_data['questions'][3]['advice'], True)
-    bot.register_next_step_handler(message, question4)
+    if glob:
+        bot.register_next_step_handler(message, question4)
 
 def question4(message):
     question(message, n_data['questions'][3]['yes'], n_data['questions'][3]['no'], n_data['questions'][4]['yes'],
-             n_data['questions'][4]['no'], n_data['questions'][4]['light'], 'get_instruction_frame', True)
+             n_data['questions'][4]['no'], n_data['questions'][4]['light'], True, 'get_instruction_frame')
     bot.register_next_step_handler(message, question5)
+             
+
 
 def question5(message):
     step = False
     if message.text == n_data['questions'][4]['yes']:
         bot.send_message(message.chat.id, 'Понял вас, свет не нужен')
+        script(message)
     elif message.text == n_data['questions'][4]['no']:
         bot.send_message(message.chat.id, 'Так и запишем!')
         request.append('get_light')
-    script(message)
+        script(message)
+    
+
 def question6(message):
-    question(message, n_data['questions'][5]['yes'], n_data['questions'][5]['no'], n_data['questions'][6]['yes'], n_data['questions'][6]['no'], n_data['questions'][6]['music'], False, "get_script")
-    bot.register_next_step_handler(message, question7)
+    step = False
+    if message.text == n_data['questions'][5]['yes']:
+        step = True
+        request.append('get_script')
+    elif message.text == n_data['questions'][5]['no']:
+        step = True
+    if step:
+        keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        button1 = types.KeyboardButton(text=n_data['questions'][6]['yes'])
+        button2 = types.KeyboardButton(text=n_data['questions'][6]['no'])
+        keyboard1.row(button1, button2)
+        bot.send_message(message.chat.id, n_data['questions'][6]['music'], reply_markup=keyboard1)
+        bot.register_next_step_handler(message, question7)
 def question7(message):
-    question(message, n_data['questions'][6]['yes'], n_data['questions'][6]['no'], n_data['questions'][7]['yes'],
-             n_data['questions'][7]['no'], n_data['questions'][7]['screensaver'], False, "get_music")
-    bot.register_next_step_handler(message, question8)
+    step = False
+    if message.text == n_data['questions'][6]['yes']:
+        step = True
+        request.append('get_music')
+    elif message.text == n_data['questions'][6]['no']:
+        step = True
+    if step:
+        keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+        button1 = types.KeyboardButton(text=n_data['questions'][7]['yes'])
+        button2 = types.KeyboardButton(text=n_data['questions'][7]['no'])
+        keyboard1.row(button1, button2)
+        bot.send_message(message.chat.id, n_data['questions'][7]['screensaver'], reply_markup=keyboard1)
+        bot.register_next_step_handler(message, question8)
 def question8(message):
-    question(message, n_data['questions'][7]['yes'], n_data['questions'][7]['no'], '',
-             '',  n_data['questions'][8]['description_screensaver'], False, "")
-    bot.register_next_step_handler(message, question9)
+    step = False
+    if message.text == n_data['questions'][7]['yes']:
+        step = True
+        request.append('')
+    elif message.text == n_data['questions'][7]['no']:
+        step = False
+    if step:
+        keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        button1 = types.KeyboardButton(text=n_data['questions'][8]['yes'])
+        button2 = types.KeyboardButton(text=n_data['questions'][8]['no'])
+        keyboard1.row(button1, button2)
+        bot.send_message(message.chat.id, n_data['questions'][8]['description_screensaver'], reply_markup=keyboard1)
+        bot.register_next_step_handler(message, question9)
+    else:
+
+        bot.register_next_step_handler(message, question10)
+
 
 @bot.message_handler(commands=['getInfo'])
 def het_info_func(message):
