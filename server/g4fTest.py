@@ -19,7 +19,7 @@ def ask_gpt(promt) -> str:
     )
     ans_message = ''
     for message in response:
-        ans_message += messag
+        ans_message += message
         
     return ans_message
 
