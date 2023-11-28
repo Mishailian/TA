@@ -43,8 +43,7 @@ def start_message(message):
     button2 = types.KeyboardButton(text=n_data['questions'][0]['edu'])
     button3 = types.KeyboardButton(text= n_data['questions'][0]['play'])
     keyboard1.row(button2, button3)
-    bot.send_message(message.chat.id, 'Привет, этот чат бот поможет тебе в создании видеоконтента. Он расскажет, как вести себя в кадре, напишет сценарий'
-                                      ', может сгенерировать видеоролик и создать картинку для превью.')
+    bot.send_message(message.chat.id, 'Мы хотим, максимально эффективно, помочь вам в создании видеоконтента. Мы зададим вам пару вопросов, которые помогут нам определить, какая конкретно информация для вас требуется. ')
     bot.send_message(message.chat.id, n_data['questions'][0]['content_type'], reply_markup = keyboard1)
     bot.register_next_step_handler(message, question1)
 def question1(message):
@@ -79,7 +78,7 @@ def question2(message):
         step = True
         request.append('format_YouTube')
     if step:
-        keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True)
+        keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
         button1 = types.KeyboardButton(text=n_data['questions'][2]['yes'])
         button2 = types.KeyboardButton(text=n_data['questions'][2]['no'])
         keyboard1.row(button1, button2)
