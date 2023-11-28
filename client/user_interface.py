@@ -1,4 +1,3 @@
-#hello worlsd--------
 import json
 from telebot import types
 import telebot
@@ -11,7 +10,7 @@ def read(filename):
     with open(filename, 'r', encoding='utf-8') as file:
         return json.load(file)
 
-n_data = read('C:/klasss/data.json')
+n_data = read('./data.json')
 def script(message):
     global glob
     glob = False
