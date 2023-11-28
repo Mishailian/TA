@@ -144,19 +144,13 @@ def question8(message):
     step = False
     if message.text == n_data['questions'][7]['yes']:
         step = True
-        request.append('')
+        bot.send_message(message.chat.id, n_data['questions'][8]['description_screensaver'])
+        bot.register_next_step_handler(message, question9)
     elif message.text == n_data['questions'][7]['no']:
         step = False
-    if step:
-        keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        button1 = types.KeyboardButton(text=n_data['questions'][8]['yes'])
-        button2 = types.KeyboardButton(text=n_data['questions'][8]['no'])
-        keyboard1.row(button1, button2)
-        bot.send_message(message.chat.id, n_data['questions'][8]['description_screensaver'], reply_markup=keyboard1)
-        bot.register_next_step_handler(message, question9)
-    else:
-
+        bot.send_message(message.chat.id, n_data['questions'][9]['idea_video'])
         bot.register_next_step_handler(message, question10)
+
 
 
 @bot.message_handler(commands=['getInfo'])
