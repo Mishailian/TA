@@ -2,7 +2,7 @@ import json
 from telebot import types
 import telebot
 from static import BOT_TOKEN
-from server.g4fTest import ask_gpt
+from g4fTest import ask_gpt
 
 glob = True
 bot = telebot.TeleBot(BOT_TOKEN)
@@ -170,7 +170,8 @@ def question9(message):
 def question10(message):
     request.append(f"Идея видео: {message.text}")
     bot.send_message(message.chat.id, "Пожалуйста, подождите пару минут, бот обрабатывает все ваши запросы.")
-    a = ask_gpt(request)
+    print('Запрос отправлен')
+    a = ask_gpt(str(request))
     print(a)
 
 if __name__ =="__main__":
