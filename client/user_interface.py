@@ -4,6 +4,8 @@ import telebot
 from static import BOT_TOKEN
 from g4fTest import ask_gpt
 
+number = 1
+renumber = 0
 glob = True
 bot = telebot.TeleBot(BOT_TOKEN)
 request = []
@@ -22,150 +24,117 @@ def script(message):
     bot.send_message(message.chat.id, n_data['questions'][5]['script'], reply_markup=keyboard1)
     bot.register_next_step_handler(message, question6)
 
-def question(message, answer1, answer2, answer3, answer4, question1, choice, request1=''):
+def path(**kwargs):
+    return n_data['questions'][number][str(kwargs['mean'])]
+
+def repath(**kwargs):
+    return n_data['questions'][renumber][str(kwargs['mean'])]
+
+def question(message, *args, **kwargs):
+    global number, renumber
     step = False
-    if message.text == answer1:
+    if message.text == kwargs['answer1']:
         step = True
-        request.append(request1)
-    elif message.text == answer2:
-        step = False
-        if message.text ==n_data['questions'][5]['no']:
-            step == True
+        request.append(kwargs['request1'])
+        number += 1
+        renumber += 1
+    elif message.text == kwargs['answer2']:
+        request.append(kwargs['request2'])
+        step = True
+        number += 1
+        renumber += 1
+        if message.text ==n_data['questions'][2]['no'] or message.text ==n_data['questions'][3]['no'] or message.text ==n_data['questions'][4]['no']:
+            step = False
+    if message.text == kwargs['answer3']:
+        request.append(kwargs['request3'])
+        step = True
+        number += 1
+        renumber += 1
     if step:
-        keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        button1 = types.KeyboardButton(text=answer3)
-        button2 = types.KeyboardButton(text=answer4)
-        keyboard1.row(button1, button2)
-        bot.send_message(message.chat.id, question1, reply_markup=keyboard1)
-    elif step == False and choice == True:
+        keyboard(message, *args, **kwargs)
+    elif step == False and kwargs['choice'] == True:
         if message.text == n_data['questions'][2]['no'] or message.text == n_data['questions'][3]['yes']:
             request.append("1")
+            number += 2
+            renumber += 2
             request.append("2")
             request.append("3")
         elif  message.text == n_data['questions'][3]['no']:
             request.append("2")
+            number += 1
+            renumber += 1
             request.append("3")
         else:
             request.append("3")
         script(message)
 
+def keyboard(message, *args, **kwargs):
+    keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
+    for i in [*args]:
+        keyboard1.row(types.KeyboardButton(text=str(i)))
+    bot.send_message(message.chat.id, kwargs['question0'], reply_markup=keyboard1)
+
 @bot.message_handler(commands=['start'])
 def start_message(message):
     request.clear
-    keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    button1 = types.KeyboardButton(text=n_data['questions'][0]['inf'])
-    keyboard1.row(button1)
-    button2 = types.KeyboardButton(text=n_data['questions'][0]['edu'])
-    button3 = types.KeyboardButton(text= n_data['questions'][0]['play'])
-    keyboard1.row(button2, button3)
+    print(number, renumber)
     bot.send_message(message.chat.id, 'Мы хотим, максимально эффективно, помочь вам в создании видеоконтента. Мы зададим вам пару вопросов, которые помогут нам определить, какая конкретно информация для вас требуется. ')
-    bot.send_message(message.chat.id, n_data['questions'][0]['content_type'], reply_markup = keyboard1)
+    keyboard(message, repath(mean = 'inf'), repath(mean = 'edu'), repath(mean = 'play'), question0 = repath(mean = 'content_type'))
     bot.register_next_step_handler(message, question1)
+
 def question1(message):
-    step = False
-    if message.text == n_data['questions'][0]['inf']:
-        step = True
-        request.append('информационный')
-    elif message.text == n_data['questions'][0]['edu']:
-        step = True
-        request.append('образовательный')
-    elif message.text == n_data['questions'][0]['play']:
-        step = True
-        request.append('развлекательный')
-    if step:
-        keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True)
-        button1 = types.KeyboardButton(text=n_data['questions'][1]['shorts'])
-        keyboard1.row(button1)
-        button2 = types.KeyboardButton(text=n_data['questions'][1]['video_blog'])
-        button3 = types.KeyboardButton(text=n_data['questions'][1]['youTube'])
-        keyboard1.row(button2, button3)
-        bot.send_message(message.chat.id, n_data['questions'][1]['format_video'], reply_markup=keyboard1)
-        bot.register_next_step_handler(message, question2)
+    print(number, renumber)
+    question(message, path(mean ='shorts'), path(mean = 'video_blog'),path(mean = 'youTube'), answer1 = repath(mean = 'inf'), request1 = 'информационный', answer2 = repath(mean = 'edu'), request2 = 'образовательный', answer3 = repath(mean = 'play'), request3 = 'развлекательный', question0 = path(mean = 'format_video'), choice = False)
+    bot.register_next_step_handler(message, question2)
+
 def question2(message):
-    step = False
-    if message.text == n_data['questions'][1]['shorts']:
-        request.append('короткое видео')
-        step = True
-    elif message.text == n_data['questions'][1]['video_blog']:
-        step = True
-        request.append('video_blog')
-    elif message.text == n_data['questions'][1]['youTube']:
-        step = True
-        request.append('видео для YouTube')
-    if step:
-        keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        button1 = types.KeyboardButton(text=n_data['questions'][2]['yes'])
-        button2 = types.KeyboardButton(text=n_data['questions'][2]['no'])
-        keyboard1.row(button1, button2)
-        bot.send_message(message.chat.id, n_data['questions'][2]['shot'], reply_markup=keyboard1)
-        bot.register_next_step_handler(message, question3)
+    print(number, renumber)
+    question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='shorts'), request1 = 'короткое видео', answer2 = repath(mean = 'video_blog'), request2 = 'video_blog', answer3 = repath(mean = 'youTube'), request3 = 'видео для YouTube', question0 = path(mean = 'shot'), choice = False)
+    bot.register_next_step_handler(message, question3)
+
 def question3(message):
-   
-    question(message, n_data['questions'][2]['yes'], n_data['questions'][2]['no'], n_data['questions'][3]['yes'], n_data['questions'][3]['no'], n_data['questions'][3]['advice'], True)
+    print(number, renumber)
+    question(message, path(mean = 'yes'),  path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = '', answer2 = repath(mean ='no'), request2 = '', answer3 = '', request3 = '', question0 = path(mean ='advice'), choice = True)
     if glob:
         bot.register_next_step_handler(message, question4)
 
 def question4(message):
-    question(message, n_data['questions'][3]['yes'], n_data['questions'][3]['no'], n_data['questions'][4]['yes'],
-             n_data['questions'][4]['no'], n_data['questions'][4]['light'], True, 'Как правильно вести себя в кадре?')
+    print(number, renumber)
+    question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = 'Как правильно вести себя в кадре?', answer2 = repath(mean ='no'), request2 = '', answer3 = '', request3 = '', question0 = path(mean ='light'), choice = True)
     bot.register_next_step_handler(message, question5)
              
-
-
 def question5(message):
-    step = False
-    if message.text == n_data['questions'][4]['yes']:
-        bot.send_message(message.chat.id, 'Понял вас, свет не нужен')
-        request.append('5')
-        script(message)
-    elif message.text == n_data['questions'][4]['no']:
-        bot.send_message(message.chat.id, 'Так и запишем!')
-        request.append('Так же дай совет, как правильно настроить свет в кадре')
-        script(message)
+    print(number, renumber)
+    question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = '', answer2 = repath(mean ='no'), request2 = 'Дай совет, как настроить свет в кадре.', answer3 = '', request3 = '', question0 = path(mean ='script'), choice = True)
+    bot.register_next_step_handler(message, question6)
     
 
 def question6(message):
-    step = False
-    if message.text == n_data['questions'][5]['yes']:
-        step = True
-        request.append('Дай подробный план для видео.')
-    elif message.text == n_data['questions'][5]['no']:
-        request.append('6scrpt')
-        step = True
-    if step:
-        keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        button1 = types.KeyboardButton(text=n_data['questions'][6]['yes'])
-        button2 = types.KeyboardButton(text=n_data['questions'][6]['no'])
-        keyboard1.row(button1, button2)
-        bot.send_message(message.chat.id, n_data['questions'][6]['music'], reply_markup=keyboard1)
-        bot.register_next_step_handler(message, question7)
-def question7(message):
-    step = False
-    if message.text == n_data['questions'][6]['yes']:
-        step = True
-        request.append('get_music')
-    elif message.text == n_data['questions'][6]['no']:
-        request.append('7mus')
-        step = True
-    if step:
-        keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
-        button1 = types.KeyboardButton(text=n_data['questions'][7]['yes'])
-        button2 = types.KeyboardButton(text=n_data['questions'][7]['no'])
-        keyboard1.row(button1, button2)
-        bot.send_message(message.chat.id, n_data['questions'][7]['screensaver'], reply_markup=keyboard1)
-        bot.register_next_step_handler(message, question8)
-def question8(message):
-    step = False
-    if message.text == n_data['questions'][7]['yes']:
-        step = True
-        bot.send_message(message.chat.id, n_data['questions'][8]['description_screensaver'])
-        bot.register_next_step_handler(message, question9)
-    elif message.text == n_data['questions'][7]['no']:
-        request.append('8zas')
-        step = False
-        bot.send_message(message.chat.id, n_data['questions'][9]['idea_video'])
-        bot.register_next_step_handler(message, question10)
+    print(number, renumber)
+    question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = 'Дай подробный план для видео', answer2 = repath(mean ='no'), request2 = '', answer3 = '', request3 = '', question0 = path(mean =('music'), choice = False))
+    bot.register_next_step_handler(message, question7)
 
+def question7(message):
+    print(number, renumber)
+    question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = 'get_music', answer2 = repath(mean ='no'), request2 = '', answer3 = '', request3 = '', question0 = path(mean =('screensaver'), choice = False))
+    bot.register_next_step_handler(message, question8)
+
+def question8(message):
+    global number, renumber
+    step = False
+    if message.text == repath(mean ='yes'):
+        step = True
+        bot.send_message(message.chat.id,path(mean = 'description_screensaver'))
+        number += 1
+        renumber += 1
+        bot.register_next_step_handler(message, question9)
+    elif message.text == repath(mean ='no'):
+        request.append('')
+        number += 1
+        renumber += 1
+        step = False
+        bot.send_message(message.chat.id, path(mean = 'idea_video'))
+        bot.register_next_step_handler(message, question10)
 
 
 @bot.message_handler(commands=['getInfo'])
@@ -177,8 +146,9 @@ def het_info_func(message):
 
 @bot.message_handler(content_types=['text'])
 def question9(message):
+    
     request.append(f"Заставка должна быть такой: {message.text}")
-    bot.send_message(message.chat.id, n_data['questions'][9]['idea_video'])
+    bot.send_message(message.chat.id, path(mean = 'idea_video'))
     bot.register_next_step_handler(message, question10)
 
 def question10(message):
