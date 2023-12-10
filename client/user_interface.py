@@ -1,8 +1,12 @@
 import json
 from telebot import types
 import telebot
+import requests
 from static import BOT_TOKEN
 from g4fTest import ask_gpt
+import translators as ts
+from translator_and_image_generator import get_picture
+
 
 number = 1
 renumber = 0
@@ -74,6 +78,7 @@ def question(message, *args, **kwargs):
         script(message)
 
 def keyboard(message, *args, **kwargs):
+    print(number)
     keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     for butText in args:
         keyboard1.row(types.KeyboardButton(butText))
@@ -100,7 +105,7 @@ def question3(message):
         bot.register_next_step_handler(message, question4)
 
 def question4(message):
-    question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = 'Как правильно вести себя в кадре?', answer2 = repath(mean ='no'), request2 = '', answer3 = '', request3 = '', question0 = path(mean ='light'), choice = True)
+    question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = 'need_light', answer2 = repath(mean ='no'), request2 = '', answer3 = '', request3 = '', question0 = path(mean ='light'), choice = True)
     bot.register_next_step_handler(message, question5)
              
 def question5(message):
@@ -108,14 +113,13 @@ def question5(message):
     bot.register_next_step_handler(message, question6)
     
 def question6(message):
-    question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = 'Дай подробный план для видео', answer2 = repath(mean ='no'), request2 = '', answer3 = '', request3 = '', question0 = path(mean =('music'), choice = False))
+    print('AAAAAAAAAAAAAAAAAAAAA',number)
+    question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = 'need_script', answer2 = repath(mean ='no'), request2 = '', answer3 = '', request3 = '', question0 = path(mean ='screensaver'), choice = False)
     bot.register_next_step_handler(message, question7)
 
-def question7(message):
-    question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = 'get_music', answer2 = repath(mean ='no'), request2 = '', answer3 = '', request3 = '', question0 = path(mean =('screensaver'), choice = False))
-    bot.register_next_step_handler(message, question8)
 
-def question8(message):
+
+def question7(message):
     global number, renumber
 
     if message.text == repath(mean ='yes'):
@@ -123,14 +127,14 @@ def question8(message):
         bot.send_message(message.chat.id,path(mean = 'description_screensaver'))
         number += 1
         renumber += 1
-        bot.register_next_step_handler(message, question9)
+        bot.register_next_step_handler(message, question8)
     elif message.text == repath(mean ='no'):
         request.append('')
         number += 1
         renumber += 1
 
         bot.send_message(message.chat.id, path(mean = 'idea_video'))
-        bot.register_next_step_handler(message, question10)
+        bot.register_next_step_handler(message, question9)
 
 
 @bot.message_handler(commands=['getInfo'])
@@ -141,19 +145,22 @@ def het_info_func(message):
     bot.send_message(message.chat.id, "Информация о проекте", reply_markup=keyboard)
 
 @bot.message_handler(content_types=['text'])
-def question9(message):
+def question8(message):
     
     request.append(f"Заставка должна быть такой: {message.text}")
     bot.send_message(message.chat.id, path(mean = 'idea_video'))
-    bot.register_next_step_handler(message, question10)
+    bot.register_next_step_handler(message, question9)
 
-def question10(message):
+def question9(message):
     request.append(f"Идея видео: {message.text}")
     bot.send_message(message.chat.id, "Пожалуйста, подождите пару минут, бот обрабатывает все ваши запросы.")
     print('Запрос отправлен')
     print(request)
-    bot.send_message(message.chat.id, ask_gpt(str(request)))
-    request.clear
+    #bot.send_message(message.chat.id, ask_gpt(str(request[8])))
+
+    if len(request[7]) > 1:
+        bot.send_message(message.chat.id, f'Вот ссылка на вашу картинку: {get_picture(request[7])}')
+        request.clear
 
 
 if __name__ =="__main__":
