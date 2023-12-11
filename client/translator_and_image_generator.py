@@ -2,17 +2,15 @@ import requests
 import json
 import translators as ts
 
-#def interpreter(text):  
-#    return ts.translate_text(query_text= text, from_language='ru', to_language='en')
+def interpreter(text):  
+    return ts.translate_text(query_text= text, from_language='ru', to_language='en')
 
 def get_picture(text):
-    respones = ts.translate_text(query_text= text, from_language='ru', to_language='en')
-
     url = "https://stablediffusionapi.com/api/v3/text2img"
 
     payload = json.dumps({
-        "key": "PNdMQDu9wEVrjweI6IZehHJGXfjhqs3dXCF1XBumVqCFjgKKGcX10Wz302MP",
-        "prompt": f"{respones}",
+        "key": "FKmCKIuLp6Hl1ZB8F3HdJT8uuPwmqauTd0uycLGRJ1QMyqp1gYIxD4HSkLLz",
+        "prompt": f"{text}",
         "negative_prompt": None,
         "width": "720",
         "height": "720",
@@ -37,11 +35,12 @@ def get_picture(text):
     response = requests.request("POST", url, headers=headers, data=payload)
 
     output_url = response.json()
-    #print(output_url)
+    print(output_url)
     img_url = output_url['output'][0]
+    print(img_url)
     return img_url
 
-#get_picture("Белая комната, а внутри нее - холст с прекрасным пейзажем")
+
 
 
 

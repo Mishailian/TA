@@ -5,7 +5,7 @@ import requests
 from static import BOT_TOKEN
 from g4fTest import ask_gpt
 import translators as ts
-from translator_and_image_generator import get_picture
+from translator_and_image_generator import get_picture, interpreter
 
 
 number = 1
@@ -78,7 +78,6 @@ def question(message, *args, **kwargs):
         script(message)
 
 def keyboard(message, *args, **kwargs):
-    print(number)
     keyboard1 = types.ReplyKeyboardMarkup(resize_keyboard=True, one_time_keyboard=True)
     for butText in args:
         keyboard1.row(types.KeyboardButton(butText))
@@ -105,15 +104,14 @@ def question3(message):
         bot.register_next_step_handler(message, question4)
 
 def question4(message):
-    question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = 'need_light', answer2 = repath(mean ='no'), request2 = '', answer3 = '', request3 = '', question0 = path(mean ='light'), choice = True)
+    question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = 'need_advice', answer2 = repath(mean ='no'), request2 = '', answer3 = '', request3 = '', question0 = path(mean ='light'), choice = True)
     bot.register_next_step_handler(message, question5)
              
 def question5(message):
-    question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = '', answer2 = repath(mean ='no'), request2 = 'Дай совет, как настроить свет в кадре.', answer3 = '', request3 = '', question0 = path(mean ='script'), choice = True)
+    question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = '', answer2 = repath(mean ='no'), request2 = 'need_light', answer3 = '', request3 = '', question0 = path(mean ='script'), choice = True)
     bot.register_next_step_handler(message, question6)
     
 def question6(message):
-    print('AAAAAAAAAAAAAAAAAAAAA',number)
     question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = 'need_script', answer2 = repath(mean ='no'), request2 = '', answer3 = '', request3 = '', question0 = path(mean ='screensaver'), choice = False)
     bot.register_next_step_handler(message, question7)
 
@@ -147,9 +145,18 @@ def het_info_func(message):
 @bot.message_handler(content_types=['text'])
 def question8(message):
     
-    request.append(f"Заставка должна быть такой: {message.text}")
+    request.append(message.text)
     bot.send_message(message.chat.id, path(mean = 'idea_video'))
     bot.register_next_step_handler(message, question9)
+def advice_message(message):
+    bot.send_message(message.chat.id, 'Советы по тому, как вести себя в кадре:')
+    for i in range(1, 9):
+        bot.send_message(message.chat.id, (n_data['questions'][9][f'advice{i}']))
+
+def light_message(message):
+    bot.send_message(message.chat.id, 'Советы по тому, как настроить свет:')
+    for i in range(1, 7):
+        bot.send_message(message.chat.id, (n_data['questions'][10][f'light{i}']))
 
 def question9(message):
     request.append(f"Идея видео: {message.text}")
@@ -158,8 +165,13 @@ def question9(message):
     print(request)
     #bot.send_message(message.chat.id, ask_gpt(str(request[8])))
 
+    if request[3] == 'need_advice':
+         advice_message(message)
+    if request[4] == 'need_light':
+        light_message(message)
     if len(request[7]) > 1:
-        bot.send_message(message.chat.id, f'Вот ссылка на вашу картинку: {get_picture(request[7])}')
+        picture = request[7]
+        bot.send_message(message.chat.id, f'Вот ссылка на вашу картинку: {get_picture(interpreter(picture))}')
         request.clear
 
 
