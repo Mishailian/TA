@@ -5,7 +5,7 @@ from static import BOT_TOKEN
 
 # Установите ваш токен от BotFather и токен от OpenAI
 
-OPENAI_API_KEY = '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'
+OPENAI_API_KEY = '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'
 
 # Настройте бота и OpenAI
 bot = telebot.TeleBot(BOT_TOKEN)
