@@ -5,7 +5,7 @@ from static import BOT_TOKEN
 
 # Установите ваш токен от BotFather и токен от OpenAI
 
-OPENAI_API_KEY = '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'
+OPENAI_API_KEY = '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'
 
 # Настройте бота и OpenAI
 bot = telebot.TeleBot(BOT_TOKEN)
@@ -35,5 +35,4 @@ def get_text(text):
     print(response_data)
     bot_reply = response_data['choices'][0]['text'].strip()
     return bot_reply
-
 

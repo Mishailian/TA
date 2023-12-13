@@ -9,7 +9,7 @@ def get_picture(text):
     url = "https://stablediffusionapi.com/api/v3/text2img"
 
     payload = json.dumps({
-        "key": "LwlEl5xmeDW1YTQtbq2B0xpJUA22XPs6n4MU7TTtZhvKuxbU9swwHhicfzJL",
+        "key": "s29JCMM84AoNOGLWBlamyWKVZQIsghIlL6TKhYQNCEFB0lhPttl23J302j6f",
         "prompt": f"{text}",
         "negative_prompt": None,
         "width": "720",
