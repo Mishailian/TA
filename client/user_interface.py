@@ -1,15 +1,12 @@
 import json
 from telebot import types
 import telebot
-import requests
 from static import BOT_TOKEN
-from g4fTest import ask_gpt
-import translators as ts
 from translator_and_image_generator import get_picture, interpreter
+from generation_text import get_text
 
 
-number = 1
-renumber = 0
+
 glob = True
 bot = telebot.TeleBot(BOT_TOKEN)
 request = []
@@ -31,10 +28,10 @@ def script(message):
     bot.register_next_step_handler(message, question6)
 
 def path(**kwargs):
-    return n_data['questions'][number][str(kwargs['mean'])]
+    return n_data['questions'][number][kwargs['mean']]
 
 def repath(**kwargs):
-    return n_data['questions'][renumber][str(kwargs['mean'])]
+    return n_data['questions'][renumber][kwargs['mean']]
 
 
 def given(dict):
@@ -61,20 +58,18 @@ def question(message, *args, **kwargs):
         keyboard(message, *args, **kwargs)
     elif not step and kwargs['choice'] :
         if message.text == n_data['questions'][2]['no'] or message.text == n_data['questions'][3]['yes']:
-            request.append("1")
             number += 3
             renumber += 3
-            request.append("2")
-            request.append("3")
+            request.append("не нужен совет")
+            request.append("не нужен свет")
         elif  message.text == n_data['questions'][3]['no']:
-            request.append("2")
             number += 2
             renumber += 2
-            request.append("3")
+            request.append("не нужен свет")
         else:
             number += 1
             renumber += 1
-            request.append("3")
+
         script(message)
 
 def keyboard(message, *args, **kwargs):
@@ -85,12 +80,17 @@ def keyboard(message, *args, **kwargs):
 
 @bot.message_handler(commands=['start'])
 def start_message(message):
+    global number, renumber
+    request = []
+    number = 1
+    renumber = 0
     request.clear
     bot.send_message(message.chat.id, 'Мы хотим, максимально эффективно, помочь вам в создании видеоконтента. Мы зададим вам пару вопросов, которые помогут нам определить, какая конкретно информация для вас требуется. ')
     keyboard(message, repath(mean = 'inf'), repath(mean = 'edu'), repath(mean = 'play'), question0 = repath(mean = 'content_type'))
     bot.register_next_step_handler(message, question1)
 
 def question1(message):
+    print(number, renumber)
     question(message, path(mean ='shorts'), path(mean = 'video_blog'),path(mean = 'youTube'), answer1 = repath(mean = 'inf'), request1 = 'информационный', answer2 = repath(mean = 'edu'), request2 = 'образовательный', answer3 = repath(mean = 'play'), request3 = 'развлекательный', question0 = path(mean = 'format_video'), choice = False)
     bot.register_next_step_handler(message, question2)
 
@@ -108,10 +108,11 @@ def question4(message):
     bot.register_next_step_handler(message, question5)
              
 def question5(message):
-    question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = '', answer2 = repath(mean ='no'), request2 = 'need_light', answer3 = '', request3 = '', question0 = path(mean ='script'), choice = True)
+    question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = 'no_light', answer2 = repath(mean ='no'), request2 = 'need_light', answer3 = '', request3 = '', question0 = path(mean ='script'), choice = True)
     bot.register_next_step_handler(message, question6)
     
 def question6(message):
+    print(number)
     question(message, path(mean = 'yes'), path(mean = 'no'), answer1 = repath(mean ='yes'), request1 = 'need_script', answer2 = repath(mean ='no'), request2 = '', answer3 = '', request3 = '', question0 = path(mean ='screensaver'), choice = False)
     bot.register_next_step_handler(message, question7)
 
@@ -159,7 +160,7 @@ def light_message(message):
         bot.send_message(message.chat.id, (n_data['questions'][10][f'light{i}']))
 
 def question9(message):
-    request.append(f"Идея видео: {message.text}")
+    request.append(message.text)
     bot.send_message(message.chat.id, "Пожалуйста, подождите пару минут, бот обрабатывает все ваши запросы.")
     print('Запрос отправлен')
     print(request)
@@ -169,10 +170,12 @@ def question9(message):
          advice_message(message)
     if request[4] == 'need_light':
         light_message(message)
+    if request[6] == 'need_script':
+        bot.send_message(message.chat.id, get_text(f"Действуй, как опытный видеоблогер со стажем 30 лет. Составь для меня подробный и интересный сценарий на тему {request[8]}, но учти, что видео должно быть записано в таком формате: {request[1]}"))
     if len(request[7]) > 1:
         picture = request[7]
         bot.send_message(message.chat.id, f'Вот ссылка на вашу картинку: {get_picture(interpreter(picture))}')
-        request.clear
+
 
 
 if __name__ =="__main__":
