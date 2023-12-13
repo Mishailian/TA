@@ -27,12 +27,13 @@ def get_text(text):
             "Content-Type": "application/json",
             "Authorization": f"Bearer {OPENAI_API_KEY}",
         },
-        json={"prompt": text, "max_tokens": 150},
+        json={"prompt": text, "max_tokens": 2000},
         proxies=proxies,
     )
+    print(response)
     response_data = response.json()
+    print(response_data)
     bot_reply = response_data['choices'][0]['text'].strip()
     return bot_reply
-
 
 

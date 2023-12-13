@@ -170,10 +170,10 @@ def question9(message):
          advice_message(message)
     if request[4] == 'need_light':
         light_message(message)
-    if request[6] == 'need_script':
-        bot.send_message(message.chat.id, get_text(f"Действуй, как опытный видеоблогер со стажем 30 лет. Составь для меня подробный и интересный сценарий на тему {request[8]}, но учти, что видео должно быть записано в таком формате: {request[1]}"))
-    if len(request[7]) > 1:
-        picture = request[7]
+    if request[5] == 'need_script':
+        bot.send_message(message.chat.id, get_text(f"Действуй, как опытный видеоблогер со стажем 30 лет. Составь для меня подробный и интересный сценарий на тему {request[7]}, но учти, что видео должно быть записано в таком формате: {request[1]}"))
+    if len(request[6]) > 1:
+        picture = request[6]
         bot.send_message(message.chat.id, f'Вот ссылка на вашу картинку: {get_picture(interpreter(picture))}')
 
 
