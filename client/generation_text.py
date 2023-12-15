@@ -35,4 +35,3 @@ def get_text(text):
     bot_reply = response_data['choices'][0]['text'].strip()
     return bot_reply
 
-print(get_text('Какого цвета небо?'))
