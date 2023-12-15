@@ -4,10 +4,9 @@ import requests
 from static import BOT_TOKEN
 
 # Установите ваш токен от BotFather и токен от OpenAI
+OPENAI_API_KEY = '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'
 
-OPENAI_API_KEY = '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'
-
-# Настройте бота и OpenAI
+# Настройте бота и OpenAI  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
 bot = telebot.TeleBot(BOT_TOKEN)
 openai.api_key = OPENAI_API_KEY
 
@@ -36,3 +35,4 @@ def get_text(text):
     bot_reply = response_data['choices'][0]['text'].strip()
     return bot_reply
 
+print(get_text('Какого цвета небо?'))

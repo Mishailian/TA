@@ -5,6 +5,8 @@ from static import BOT_TOKEN
 from translator_and_image_generator import get_picture, interpreter
 from generation_text import get_text
 
+number = 0
+renumber = 0
 
 
 glob = True
@@ -28,6 +30,7 @@ def script(message):
     bot.register_next_step_handler(message, question6)
 
 def path(**kwargs):
+    print(number)
     return n_data['questions'][number][kwargs['mean']]
 
 def repath(**kwargs):
@@ -120,9 +123,8 @@ def question6(message):
 
 def question7(message):
     global number, renumber
-
+    print('aaaaaaaaaaaaaaaaaaaaaaaaaaa', number)
     if message.text == repath(mean ='yes'):
-
         bot.send_message(message.chat.id,path(mean = 'description_screensaver'))
         number += 1
         renumber += 1
